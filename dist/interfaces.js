@@ -1,4 +1,4 @@
-export const PAYMENT_PROVIDER = {
+export var PAYMENT_PROVIDER = {
     MOONPAY: "moonpay",
     WYRE: "wyre",
     RAMPNETWORK: "rampnetwork",
@@ -6,18 +6,18 @@ export const PAYMENT_PROVIDER = {
     MERCURYO: "mercuryo",
     TRANSAK: "transak",
 };
-export const TORUS_BUILD_ENV = {
+export var TORUS_BUILD_ENV = {
     PRODUCTION: "production",
     DEVELOPMENT: "development",
     TESTING: "testing",
 };
-export const BUTTON_POSITION = {
+export var BUTTON_POSITION = {
     BOTTOM_LEFT: "bottom-left",
     TOP_LEFT: "top-left",
     BOTTOM_RIGHT: "bottom-right",
     TOP_RIGHT: "top-right",
 };
-export const LOGIN_PROVIDER = {
+export var LOGIN_PROVIDER = {
     GOOGLE: "google",
     FACEBOOK: "facebook",
     REDDIT: "reddit",

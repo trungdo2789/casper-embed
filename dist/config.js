@@ -1,5 +1,5 @@
 import { LOGIN_PROVIDER } from "./interfaces";
-const translations = {
+var translations = {
     en: {
         embed: {
             continue: "Continue",
@@ -54,8 +54,8 @@ const translations = {
 export default {
     supportedVerifierList: [LOGIN_PROVIDER.GOOGLE, LOGIN_PROVIDER.REDDIT, LOGIN_PROVIDER.DISCORD],
     api: "https://api.tor.us",
-    translations,
+    translations: translations,
     prodTorusUrl: "",
-    localStorageKey: `torus-${window.location.hostname}`,
+    localStorageKey: "torus-".concat(window.location.hostname),
 };
 //# sourceMappingURL=config.js.map
