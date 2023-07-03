@@ -1,4 +1,6 @@
-import { LOGIN_PROVIDER } from "./interfaces";
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var interfaces_1 = require("./interfaces");
 var translations = {
     en: {
         embed: {
@@ -51,8 +53,8 @@ var translations = {
         },
     },
 };
-export default {
-    supportedVerifierList: [LOGIN_PROVIDER.GOOGLE, LOGIN_PROVIDER.REDDIT, LOGIN_PROVIDER.DISCORD],
+exports.default = {
+    supportedVerifierList: [interfaces_1.LOGIN_PROVIDER.GOOGLE, interfaces_1.LOGIN_PROVIDER.REDDIT, interfaces_1.LOGIN_PROVIDER.DISCORD],
     api: "https://api.tor.us",
     translations: translations,
     prodTorusUrl: "",

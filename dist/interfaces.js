@@ -1,4 +1,7 @@
-export var PAYMENT_PROVIDER = {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.LOGIN_PROVIDER = exports.BUTTON_POSITION = exports.TORUS_BUILD_ENV = exports.PAYMENT_PROVIDER = void 0;
+exports.PAYMENT_PROVIDER = {
     MOONPAY: "moonpay",
     WYRE: "wyre",
     RAMPNETWORK: "rampnetwork",
@@ -6,18 +9,18 @@ export var PAYMENT_PROVIDER = {
     MERCURYO: "mercuryo",
     TRANSAK: "transak",
 };
-export var TORUS_BUILD_ENV = {
+exports.TORUS_BUILD_ENV = {
     PRODUCTION: "production",
     DEVELOPMENT: "development",
     TESTING: "testing",
 };
-export var BUTTON_POSITION = {
+exports.BUTTON_POSITION = {
     BOTTOM_LEFT: "bottom-left",
     TOP_LEFT: "top-left",
     BOTTOM_RIGHT: "bottom-right",
     TOP_RIGHT: "top-right",
 };
-export var LOGIN_PROVIDER = {
+exports.LOGIN_PROVIDER = {
     GOOGLE: "google",
     FACEBOOK: "facebook",
     REDDIT: "reddit",

@@ -1,3 +1,4 @@
+"use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -60,12 +61,16 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-import { EthereumProviderError } from "@metamask/rpc-errors";
-import { PROVIDER_JRPC_METHODS, PROVIDER_NOTIFICATIONS } from "@toruslabs/base-controllers";
-import dequal from "fast-deep-equal";
-import BaseProvider from "./baseProvider";
-import log from "./loglevel";
-import messages from "./messages";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var rpc_errors_1 = require("@metamask/rpc-errors");
+var base_controllers_1 = require("@toruslabs/base-controllers");
+var fast_deep_equal_1 = __importDefault(require("fast-deep-equal"));
+var baseProvider_1 = __importDefault(require("./baseProvider"));
+var loglevel_1 = __importDefault(require("./loglevel"));
+var messages_1 = __importDefault(require("./messages"));
 /**
  * @param connectionStream - A Node.js duplex stream
  * @param opts - An options bag
@@ -90,13 +95,13 @@ var TorusInPageProvider = /** @class */ (function (_super) {
         });
         var jsonRpcNotificationHandler = function (payload) {
             var method = payload.method, params = payload.params;
-            if (method === PROVIDER_NOTIFICATIONS.ACCOUNTS_CHANGED) {
+            if (method === base_controllers_1.PROVIDER_NOTIFICATIONS.ACCOUNTS_CHANGED) {
                 _this._handleAccountsChanged(params);
             }
-            else if (method === PROVIDER_NOTIFICATIONS.UNLOCK_STATE_CHANGED) {
+            else if (method === base_controllers_1.PROVIDER_NOTIFICATIONS.UNLOCK_STATE_CHANGED) {
                 _this._handleUnlockStateChanged(params);
             }
-            else if (method === PROVIDER_NOTIFICATIONS.CHAIN_CHANGED) {
+            else if (method === base_controllers_1.PROVIDER_NOTIFICATIONS.CHAIN_CHANGED) {
                 _this._handleChainChanged(params);
             }
         };
@@ -125,7 +130,7 @@ var TorusInPageProvider = /** @class */ (function (_super) {
                     case 0:
                         _b.trys.push([0, 2, 3, 4]);
                         return [4 /*yield*/, this.request({
-                                method: PROVIDER_JRPC_METHODS.GET_PROVIDER_STATE,
+                                method: base_controllers_1.PROVIDER_JRPC_METHODS.GET_PROVIDER_STATE,
                                 params: [],
                             })];
                     case 1:
@@ -138,10 +143,10 @@ var TorusInPageProvider = /** @class */ (function (_super) {
                         return [3 /*break*/, 4];
                     case 2:
                         error_1 = _b.sent();
-                        log.error("Torus: Failed to get initial state. Please report this bug.", error_1);
+                        loglevel_1.default.error("Torus: Failed to get initial state. Please report this bug.", error_1);
                         return [3 /*break*/, 4];
                     case 3:
-                        log.info("initialized provider state");
+                        loglevel_1.default.info("initialized provider state");
                         this._state.initialized = true;
                         this.emit("_initialized");
                         return [7 /*endfinally*/];
@@ -188,7 +193,7 @@ var TorusInPageProvider = /** @class */ (function (_super) {
         if (!this._state.isConnected) {
             this._state.isConnected = true;
             this.emit("connect", { chainId: chainId });
-            log.debug(messages.info.connected(chainId));
+            loglevel_1.default.debug(messages_1.default.info.connected(chainId));
         }
     };
     /**
@@ -207,14 +212,14 @@ var TorusInPageProvider = /** @class */ (function (_super) {
             this._state.isConnected = false;
             var error = void 0;
             if (isRecoverable) {
-                error = new EthereumProviderError(1013, // Try again later
-                errorMessage || messages.errors.disconnected());
-                log.debug(error);
+                error = new rpc_errors_1.EthereumProviderError(1013, // Try again later
+                errorMessage || messages_1.default.errors.disconnected());
+                loglevel_1.default.debug(error);
             }
             else {
-                error = new EthereumProviderError(1011, // Internal error
-                errorMessage || messages.errors.permanentlyDisconnected());
-                log.error(error);
+                error = new rpc_errors_1.EthereumProviderError(1011, // Internal error
+                errorMessage || messages_1.default.errors.permanentlyDisconnected());
+                loglevel_1.default.error(error);
                 this.chainId = null;
                 this._state.accounts = null;
                 this.selectedAddress = null;
@@ -233,23 +238,23 @@ var TorusInPageProvider = /** @class */ (function (_super) {
         // defensive programming
         var finalAccounts = accounts;
         if (!Array.isArray(finalAccounts)) {
-            log.error("Torus: Received non-array accounts parameter. Please report this bug.", finalAccounts);
+            loglevel_1.default.error("Torus: Received non-array accounts parameter. Please report this bug.", finalAccounts);
             finalAccounts = [];
         }
         for (var _i = 0, accounts_1 = accounts; _i < accounts_1.length; _i++) {
             var account = accounts_1[_i];
             if (typeof account !== "string") {
-                log.error("Torus: Received non-string account. Please report this bug.", accounts);
+                loglevel_1.default.error("Torus: Received non-string account. Please report this bug.", accounts);
                 finalAccounts = [];
                 break;
             }
         }
         // emit accountsChanged if anything about the accounts array has changed
-        if (!dequal(this._state.accounts, finalAccounts)) {
+        if (!(0, fast_deep_equal_1.default)(this._state.accounts, finalAccounts)) {
             // we should always have the correct accounts even before casper_accounts
             // returns, except in cases where isInternal is true
             if (isEthAccounts && Array.isArray(this._state.accounts) && this._state.accounts.length > 0 && !isInternal) {
-                log.error('Torus: "casper_accounts" unexpectedly updated accounts. Please report this bug.', finalAccounts);
+                loglevel_1.default.error('Torus: "casper_accounts" unexpectedly updated accounts. Please report this bug.', finalAccounts);
             }
             this._state.accounts = finalAccounts;
             this.emit("accountsChanged", finalAccounts);
@@ -271,7 +276,7 @@ var TorusInPageProvider = /** @class */ (function (_super) {
     TorusInPageProvider.prototype._handleChainChanged = function (_a) {
         var _b = _a === void 0 ? {} : _a, chainId = _b.chainId;
         if (!chainId) {
-            log.error("Torus: Received invalid network parameters. Please report this bug.", { chainId: chainId });
+            loglevel_1.default.error("Torus: Received invalid network parameters. Please report this bug.", { chainId: chainId });
             return;
         }
         if (chainId === "loading") {
@@ -300,7 +305,7 @@ var TorusInPageProvider = /** @class */ (function (_super) {
     TorusInPageProvider.prototype._handleUnlockStateChanged = function (_a) {
         var _b = _a === void 0 ? {} : _a, accounts = _b.accounts, isUnlocked = _b.isUnlocked;
         if (typeof isUnlocked !== "boolean") {
-            log.error("Torus: Received invalid isUnlocked parameter. Please report this bug.", { isUnlocked: isUnlocked });
+            loglevel_1.default.error("Torus: Received invalid isUnlocked parameter. Please report this bug.", { isUnlocked: isUnlocked });
             return;
         }
         if (isUnlocked !== this._state.isUnlocked) {
@@ -317,6 +322,6 @@ var TorusInPageProvider = /** @class */ (function (_super) {
         hasEmittedConnection: false,
     };
     return TorusInPageProvider;
-}(BaseProvider));
-export default TorusInPageProvider;
+}(baseProvider_1.default));
+exports.default = TorusInPageProvider;
 //# sourceMappingURL=inPageProvider.js.map

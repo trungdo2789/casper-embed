@@ -1,3 +1,4 @@
+"use strict";
 var __assign = (this && this.__assign) || function () {
     __assign = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
@@ -45,21 +46,25 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-import { COMMUNICATION_JRPC_METHODS } from "@toruslabs/base-controllers";
-import { setAPIKey } from "@toruslabs/http-helpers";
-import { BasePostMessageStream, getRpcPromiseCallback } from "@toruslabs/openlogin-jrpc";
-import { BUTTON_POSITION, TORUS_BUILD_ENV, } from ".//interfaces";
-import TorusCommunicationProvider from "./communicationProvider";
-import configuration from "./config";
-import { documentReady, htmlToElement } from "./embedUtils";
-import TorusInPageProvider from "./inPageProvider";
-import log from "./loglevel";
-import PopupHandler from "./PopupHandler";
-import getSiteMetadata from "./siteMetadata";
-import { FEATURES_CONFIRM_WINDOW, FEATURES_DEFAULT_WALLET_WINDOW, FEATURES_PROVIDER_CHANGE_WINDOW, getPopupFeatures, getTorusUrl, getWindowId, storageAvailable, } from "./utils";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var base_controllers_1 = require("@toruslabs/base-controllers");
+var http_helpers_1 = require("@toruslabs/http-helpers");
+var openlogin_jrpc_1 = require("@toruslabs/openlogin-jrpc");
+var interfaces_1 = require(".//interfaces");
+var communicationProvider_1 = __importDefault(require("./communicationProvider"));
+var config_1 = __importDefault(require("./config"));
+var embedUtils_1 = require("./embedUtils");
+var inPageProvider_1 = __importDefault(require("./inPageProvider"));
+var loglevel_1 = __importDefault(require("./loglevel"));
+var PopupHandler_1 = __importDefault(require("./PopupHandler"));
+var siteMetadata_1 = __importDefault(require("./siteMetadata"));
+var utils_1 = require("./utils");
 var PROVIDER_UNSAFE_METHODS = ["account_put_deploy", "sign_message"];
-var COMMUNICATION_UNSAFE_METHODS = [COMMUNICATION_JRPC_METHODS.SET_PROVIDER];
-var isLocalStorageAvailable = storageAvailable("localStorage");
+var COMMUNICATION_UNSAFE_METHODS = [base_controllers_1.COMMUNICATION_JRPC_METHODS.SET_PROVIDER];
+var isLocalStorageAvailable = (0, utils_1.storageAvailable)("localStorage");
 // preload for iframe doesn't work https://bugs.chromium.org/p/chromium/issues/detail?id=593267
 (function preLoadIframe() {
     return __awaiter(this, void 0, void 0, function () {
@@ -71,7 +76,7 @@ var isLocalStorageAvailable = storageAvailable("localStorage");
                     if (typeof document === "undefined")
                         return [2 /*return*/];
                     torusIframeHtml = document.createElement("link");
-                    return [4 /*yield*/, getTorusUrl("production")];
+                    return [4 /*yield*/, (0, utils_1.getTorusUrl)("production")];
                 case 1:
                     torusUrl = (_a.sent()).torusUrl;
                     torusIframeHtml.href = "".concat(torusUrl, "/frame");
@@ -86,7 +91,7 @@ var isLocalStorageAvailable = storageAvailable("localStorage");
                     return [3 /*break*/, 3];
                 case 2:
                     error_1 = _a.sent();
-                    log.warn(error_1);
+                    loglevel_1.default.warn(error_1);
                     return [3 /*break*/, 3];
                 case 3: return [2 /*return*/];
             }
@@ -104,7 +109,7 @@ var Torus = /** @class */ (function () {
         this.dappStorageKey = "";
     }
     Torus.prototype.init = function (_a) {
-        var _b = _a === void 0 ? {} : _a, _c = _b.buildEnv, buildEnv = _c === void 0 ? TORUS_BUILD_ENV.PRODUCTION : _c, _d = _b.enableLogging, enableLogging = _d === void 0 ? false : _d, network = _b.network, _e = _b.showTorusButton, showTorusButton = _e === void 0 ? false : _e, _f = _b.useLocalStorage, useLocalStorage = _f === void 0 ? false : _f, _g = _b.buttonPosition, buttonPosition = _g === void 0 ? BUTTON_POSITION.BOTTOM_LEFT : _g, _h = _b.apiKey, apiKey = _h === void 0 ? "torus-default" : _h;
+        var _b = _a === void 0 ? {} : _a, _c = _b.buildEnv, buildEnv = _c === void 0 ? interfaces_1.TORUS_BUILD_ENV.PRODUCTION : _c, _d = _b.enableLogging, enableLogging = _d === void 0 ? false : _d, network = _b.network, _e = _b.showTorusButton, showTorusButton = _e === void 0 ? false : _e, _f = _b.useLocalStorage, useLocalStorage = _f === void 0 ? false : _f, _g = _b.buttonPosition, buttonPosition = _g === void 0 ? interfaces_1.BUTTON_POSITION.BOTTOM_LEFT : _g, _h = _b.apiKey, apiKey = _h === void 0 ? "torus-default" : _h;
         return __awaiter(this, void 0, void 0, function () {
             var _j, torusUrl, logLevel, dappStorageKey, torusIframeUrl, hashParams, handleSetup;
             var _this = this;
@@ -113,17 +118,17 @@ var Torus = /** @class */ (function () {
                     case 0:
                         if (this.isInitialized)
                             throw new Error("Already initialized");
-                        setAPIKey(apiKey);
-                        return [4 /*yield*/, getTorusUrl(buildEnv)];
+                        (0, http_helpers_1.setAPIKey)(apiKey);
+                        return [4 /*yield*/, (0, utils_1.getTorusUrl)(buildEnv)];
                     case 1:
                         _j = _k.sent(), torusUrl = _j.torusUrl, logLevel = _j.logLevel;
-                        log.info(torusUrl, "url loaded");
+                        loglevel_1.default.info(torusUrl, "url loaded");
                         this.torusUrl = torusUrl;
-                        log.setDefaultLevel(logLevel);
+                        loglevel_1.default.setDefaultLevel(logLevel);
                         if (enableLogging)
-                            log.enableAll();
+                            loglevel_1.default.enableAll();
                         else
-                            log.disableAll();
+                            loglevel_1.default.disableAll();
                         dappStorageKey = this.handleDappStorageKey(useLocalStorage);
                         torusIframeUrl = new URL(torusUrl);
                         if (torusIframeUrl.pathname.endsWith("/"))
@@ -136,9 +141,9 @@ var Torus = /** @class */ (function () {
                         hashParams.append("origin", window.location.origin);
                         torusIframeUrl.hash = hashParams.toString();
                         // Iframe code
-                        this.torusIframe = htmlToElement("<iframe\n        id=\"torusIframe\"\n        class=\"torusIframe\"\n        src=\"".concat(torusIframeUrl.href, "\"\n        style=\"display: none; position: fixed; top: 0; right: 0; width: 100%;\n        height: 100%; border: none; border-radius: 0; z-index: ").concat(this.modalZIndex.toString(), "\"\n      ></iframe>"));
-                        this.torusAlertContainer = htmlToElement("<div id=\"torusAlertContainer\" style=\"display:none; z-index: ".concat(this.alertZIndex.toString(), "\"></div>"));
-                        this.styleLink = htmlToElement("<link href=\"".concat(torusUrl, "/css/widget.css\" rel=\"stylesheet\" type=\"text/css\">"));
+                        this.torusIframe = (0, embedUtils_1.htmlToElement)("<iframe\n        id=\"torusIframe\"\n        class=\"torusIframe\"\n        src=\"".concat(torusIframeUrl.href, "\"\n        style=\"display: none; position: fixed; top: 0; right: 0; width: 100%;\n        height: 100%; border: none; border-radius: 0; z-index: ").concat(this.modalZIndex.toString(), "\"\n      ></iframe>"));
+                        this.torusAlertContainer = (0, embedUtils_1.htmlToElement)("<div id=\"torusAlertContainer\" style=\"display:none; z-index: ".concat(this.alertZIndex.toString(), "\"></div>"));
+                        this.styleLink = (0, embedUtils_1.htmlToElement)("<link href=\"".concat(torusUrl, "/css/widget.css\" rel=\"stylesheet\" type=\"text/css\">"));
                         handleSetup = function () {
                             return new Promise(function (resolve, reject) {
                                 try {
@@ -149,7 +154,7 @@ var Torus = /** @class */ (function () {
                                         var dappMetadata;
                                         return __generator(this, function (_a) {
                                             switch (_a.label) {
-                                                case 0: return [4 /*yield*/, getSiteMetadata()];
+                                                case 0: return [4 /*yield*/, (0, siteMetadata_1.default)()];
                                                 case 1:
                                                     dappMetadata = _a.sent();
                                                     // send init params here
@@ -180,7 +185,7 @@ var Torus = /** @class */ (function () {
                                 }
                             });
                         };
-                        return [4 /*yield*/, documentReady()];
+                        return [4 /*yield*/, (0, embedUtils_1.documentReady)()];
                     case 2:
                         _k.sent();
                         return [4 /*yield*/, handleSetup()];
@@ -210,7 +215,7 @@ var Torus = /** @class */ (function () {
                         }
                         return [4 /*yield*/, new Promise(function (resolve, reject) {
                                 // We use this method because we want to update inPage provider state with account info
-                                _this.provider._rpcRequest({ method: "casper_requestAccounts", params: [_this.requestedLoginProvider, params.login_hint] }, getRpcPromiseCallback(resolve, reject));
+                                _this.provider._rpcRequest({ method: "casper_requestAccounts", params: [_this.requestedLoginProvider, params.login_hint] }, (0, openlogin_jrpc_1.getRpcPromiseCallback)(resolve, reject));
                             })];
                     case 2:
                         res = _a.sent();
@@ -221,7 +226,7 @@ var Torus = /** @class */ (function () {
                         throw new Error("Login failed");
                     case 3:
                         error_2 = _a.sent();
-                        log.error("login failed", error_2);
+                        loglevel_1.default.error("login failed", error_2);
                         throw error_2;
                     case 4:
                         this.communicationProvider._displayIframe({ isFull: false });
@@ -239,7 +244,7 @@ var Torus = /** @class */ (function () {
                         if (!this.communicationProvider.isLoggedIn)
                             throw new Error("Not logged in");
                         return [4 /*yield*/, this.communicationProvider.request({
-                                method: COMMUNICATION_JRPC_METHODS.LOGOUT,
+                                method: base_controllers_1.COMMUNICATION_JRPC_METHODS.LOGOUT,
                                 params: [],
                             })];
                     case 1:
@@ -297,7 +302,7 @@ var Torus = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.communicationProvider.request({
-                            method: COMMUNICATION_JRPC_METHODS.SET_PROVIDER,
+                            method: base_controllers_1.COMMUNICATION_JRPC_METHODS.SET_PROVIDER,
                             params: __assign({}, params),
                         })];
                     case 1:
@@ -314,7 +319,7 @@ var Torus = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.communicationProvider.request({
-                            method: COMMUNICATION_JRPC_METHODS.WALLET_INSTANCE_ID,
+                            method: base_controllers_1.COMMUNICATION_JRPC_METHODS.WALLET_INSTANCE_ID,
                             params: [],
                         })];
                     case 1:
@@ -329,7 +334,7 @@ var Torus = /** @class */ (function () {
                         if (this.dappStorageKey) {
                             finalUrl.hash = "#dappStorageKey=".concat(this.dappStorageKey);
                         }
-                        walletWindow = new PopupHandler({ url: finalUrl, features: getPopupFeatures(FEATURES_DEFAULT_WALLET_WINDOW) });
+                        walletWindow = new PopupHandler_1.default({ url: finalUrl, features: (0, utils_1.getPopupFeatures)(utils_1.FEATURES_DEFAULT_WALLET_WINDOW) });
                         walletWindow.open();
                         return [2 /*return*/];
                 }
@@ -342,7 +347,7 @@ var Torus = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.communicationProvider.request({
-                            method: COMMUNICATION_JRPC_METHODS.USER_INFO,
+                            method: base_controllers_1.COMMUNICATION_JRPC_METHODS.USER_INFO,
                             params: [],
                         })];
                     case 1:
@@ -360,10 +365,10 @@ var Torus = /** @class */ (function () {
                     case 0:
                         if (!this.isInitialized)
                             throw new Error("Torus is not initialized");
-                        windowId = getWindowId();
+                        windowId = (0, utils_1.getWindowId)();
                         this.communicationProvider._handleWindow(windowId);
                         return [4 /*yield*/, this.communicationProvider.request({
-                                method: COMMUNICATION_JRPC_METHODS.TOPUP,
+                                method: base_controllers_1.COMMUNICATION_JRPC_METHODS.TOPUP,
                                 params: { provider: provider, params: params, windowId: windowId },
                             })];
                     case 1:
@@ -399,28 +404,28 @@ var Torus = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        log.info("setupWeb3 running");
-                        providerStream = new BasePostMessageStream({
+                        loglevel_1.default.info("setupWeb3 running");
+                        providerStream = new openlogin_jrpc_1.BasePostMessageStream({
                             name: "embed_torus",
                             target: "iframe_torus",
                             targetWindow: this.torusIframe.contentWindow,
                             targetOrigin: providerParams.torusUrl,
                         });
-                        communicationStream = new BasePostMessageStream({
+                        communicationStream = new openlogin_jrpc_1.BasePostMessageStream({
                             name: "embed_communication",
                             target: "iframe_communication",
                             targetWindow: this.torusIframe.contentWindow,
                             targetOrigin: providerParams.torusUrl,
                         });
-                        inPageProvider = new TorusInPageProvider(providerStream, {});
-                        communicationProvider = new TorusCommunicationProvider(communicationStream, {});
+                        inPageProvider = new inPageProvider_1.default(providerStream, {});
+                        communicationProvider = new communicationProvider_1.default(communicationStream, {});
                         inPageProvider.tryWindowHandle = function (payload, cb) {
                             var _payload = payload;
                             if (!Array.isArray(_payload) && PROVIDER_UNSAFE_METHODS.includes(_payload.method)) {
-                                var windowId = getWindowId();
+                                var windowId = (0, utils_1.getWindowId)();
                                 communicationProvider._handleWindow(windowId, {
                                     target: "_blank",
-                                    features: getPopupFeatures(FEATURES_CONFIRM_WINDOW),
+                                    features: (0, utils_1.getPopupFeatures)(utils_1.FEATURES_CONFIRM_WINDOW),
                                 });
                                 // for inPageProvider methods sending windowId in request instead of params
                                 // as params might be positional.
@@ -431,10 +436,10 @@ var Torus = /** @class */ (function () {
                         communicationProvider.tryWindowHandle = function (payload, cb) {
                             var _payload = payload;
                             if (!Array.isArray(_payload) && COMMUNICATION_UNSAFE_METHODS.includes(_payload.method)) {
-                                var windowId = getWindowId();
+                                var windowId = (0, utils_1.getWindowId)();
                                 communicationProvider._handleWindow(windowId, {
                                     target: "_blank",
-                                    features: getPopupFeatures(FEATURES_PROVIDER_CHANGE_WINDOW), // todo: are these features generic for all
+                                    features: (0, utils_1.getPopupFeatures)(utils_1.FEATURES_PROVIDER_CHANGE_WINDOW), // todo: are these features generic for all
                                 });
                                 // for communication methods sending window id in jrpc req params
                                 _payload.params.windowId = windowId;
@@ -482,7 +487,7 @@ var Torus = /** @class */ (function () {
                             ])];
                     case 1:
                         _a.sent();
-                        log.debug("Torus - injected provider");
+                        loglevel_1.default.debug("Torus - injected provider");
                         return [2 /*return*/];
                 }
             });
@@ -491,12 +496,12 @@ var Torus = /** @class */ (function () {
     Torus.prototype.handleDappStorageKey = function (useLocalStorage) {
         var dappStorageKey = "";
         if (isLocalStorageAvailable && useLocalStorage) {
-            var storedKey = window.localStorage.getItem(configuration.localStorageKey);
+            var storedKey = window.localStorage.getItem(config_1.default.localStorageKey);
             if (storedKey)
                 dappStorageKey = storedKey;
             else {
-                var generatedKey = "torus-app-".concat(getWindowId());
-                window.localStorage.setItem(configuration.localStorageKey, generatedKey);
+                var generatedKey = "torus-app-".concat((0, utils_1.getWindowId)());
+                window.localStorage.setItem(config_1.default.localStorageKey, generatedKey);
                 dappStorageKey = generatedKey;
             }
         }
@@ -505,5 +510,5 @@ var Torus = /** @class */ (function () {
     };
     return Torus;
 }());
-export default Torus;
+exports.default = Torus;
 //# sourceMappingURL=embed.js.map

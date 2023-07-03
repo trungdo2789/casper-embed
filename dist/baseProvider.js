@@ -1,3 +1,4 @@
+"use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -60,13 +61,17 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-import { rpcErrors } from "@metamask/rpc-errors";
-import { createLoggerMiddleware } from "@toruslabs/base-controllers";
-import { createIdRemapMiddleware, createStreamMiddleware, getRpcPromiseCallback, JRPCEngine, ObjectMultiplex, SafeEventEmitter, } from "@toruslabs/openlogin-jrpc";
-import { isDuplexStream } from "is-stream";
-import pump from "pump";
-import messages from "./messages";
-import { createErrorMiddleware, logStreamDisconnectWarning } from "./utils";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var rpc_errors_1 = require("@metamask/rpc-errors");
+var base_controllers_1 = require("@toruslabs/base-controllers");
+var openlogin_jrpc_1 = require("@toruslabs/openlogin-jrpc");
+var is_stream_1 = require("is-stream");
+var pump_1 = __importDefault(require("pump"));
+var messages_1 = __importDefault(require("./messages"));
+var utils_1 = require("./utils");
 /**
  * @param connectionStream - A Node.js duplex stream
  * @param opts - An options bag
@@ -76,8 +81,8 @@ var BaseProvider = /** @class */ (function (_super) {
     function BaseProvider(connectionStream, _a) {
         var _b = _a.maxEventListeners, maxEventListeners = _b === void 0 ? 100 : _b, _c = _a.jsonRpcStreamName, jsonRpcStreamName = _c === void 0 ? "provider" : _c;
         var _this = _super.call(this) || this;
-        if (!isDuplexStream(connectionStream)) {
-            throw new Error(messages.errors.invalidDuplexStream());
+        if (!(0, is_stream_1.isDuplexStream)(connectionStream)) {
+            throw new Error(messages_1.default.errors.invalidDuplexStream());
         }
         _this.isTorus = true;
         _this.setMaxListeners(maxEventListeners);
@@ -90,19 +95,19 @@ var BaseProvider = /** @class */ (function (_super) {
         _this.sendAsync = _this.sendAsync.bind(_this);
         // this.enable = this.enable.bind(this);
         // setup connectionStream multiplexing
-        var mux = new ObjectMultiplex();
-        pump(connectionStream, mux, connectionStream, _this._handleStreamDisconnect.bind(_this, "Torus"));
+        var mux = new openlogin_jrpc_1.ObjectMultiplex();
+        (0, pump_1.default)(connectionStream, mux, connectionStream, _this._handleStreamDisconnect.bind(_this, "Torus"));
         // ignore phishing warning message (handled elsewhere)
         mux.ignoreStream("phishing");
         // setup own event listeners
         // connect to async provider
-        var jsonRpcConnection = createStreamMiddleware();
-        pump(jsonRpcConnection.stream, mux.createStream(jsonRpcStreamName), jsonRpcConnection.stream, _this._handleStreamDisconnect.bind(_this, "Torus RpcProvider"));
+        var jsonRpcConnection = (0, openlogin_jrpc_1.createStreamMiddleware)();
+        (0, pump_1.default)(jsonRpcConnection.stream, mux.createStream(jsonRpcStreamName), jsonRpcConnection.stream, _this._handleStreamDisconnect.bind(_this, "Torus RpcProvider"));
         // handle RPC requests via dapp-side rpc engine
-        var rpcEngine = new JRPCEngine();
-        rpcEngine.push(createIdRemapMiddleware());
-        rpcEngine.push(createErrorMiddleware());
-        rpcEngine.push(createLoggerMiddleware({ origin: location.origin }));
+        var rpcEngine = new openlogin_jrpc_1.JRPCEngine();
+        rpcEngine.push((0, openlogin_jrpc_1.createIdRemapMiddleware)());
+        rpcEngine.push((0, utils_1.createErrorMiddleware)());
+        rpcEngine.push((0, base_controllers_1.createLoggerMiddleware)({ origin: location.origin }));
         rpcEngine.push(jsonRpcConnection.middleware);
         _this._rpcEngine = rpcEngine;
         _this.jsonRpcConnectionEvents = jsonRpcConnection.events;
@@ -122,26 +127,26 @@ var BaseProvider = /** @class */ (function (_super) {
             var _this = this;
             return __generator(this, function (_a) {
                 if (!args || typeof args !== "object" || Array.isArray(args)) {
-                    throw rpcErrors.invalidRequest({
-                        message: messages.errors.invalidRequestArgs(),
-                        data: __assign(__assign({}, (args || {})), { cause: messages.errors.invalidRequestArgs() }),
+                    throw rpc_errors_1.rpcErrors.invalidRequest({
+                        message: messages_1.default.errors.invalidRequestArgs(),
+                        data: __assign(__assign({}, (args || {})), { cause: messages_1.default.errors.invalidRequestArgs() }),
                     });
                 }
                 method = args.method, params = args.params;
                 if (typeof method !== "string" || method.length === 0) {
-                    throw rpcErrors.invalidRequest({
-                        message: messages.errors.invalidRequestMethod(),
-                        data: __assign(__assign({}, (args || {})), { cause: messages.errors.invalidRequestArgs() }),
+                    throw rpc_errors_1.rpcErrors.invalidRequest({
+                        message: messages_1.default.errors.invalidRequestMethod(),
+                        data: __assign(__assign({}, (args || {})), { cause: messages_1.default.errors.invalidRequestArgs() }),
                     });
                 }
                 if (params !== undefined && !Array.isArray(params) && (typeof params !== "object" || params === null)) {
-                    throw rpcErrors.invalidRequest({
-                        message: messages.errors.invalidRequestParams(),
-                        data: __assign(__assign({}, (args || {})), { cause: messages.errors.invalidRequestArgs() }),
+                    throw rpc_errors_1.rpcErrors.invalidRequest({
+                        message: messages_1.default.errors.invalidRequestParams(),
+                        data: __assign(__assign({}, (args || {})), { cause: messages_1.default.errors.invalidRequestArgs() }),
                     });
                 }
                 return [2 /*return*/, new Promise(function (resolve, reject) {
-                        _this._rpcRequest({ method: method, params: params }, getRpcPromiseCallback(resolve, reject));
+                        _this._rpcRequest({ method: method, params: params }, (0, openlogin_jrpc_1.getRpcPromiseCallback)(resolve, reject));
                     })];
             });
         });
@@ -164,7 +169,7 @@ var BaseProvider = /** @class */ (function (_super) {
     BaseProvider.prototype.sendAsync = function (payload) {
         var _this = this;
         return new Promise(function (resolve, reject) {
-            _this._rpcRequest(payload, getRpcPromiseCallback(resolve, reject));
+            _this._rpcRequest(payload, (0, openlogin_jrpc_1.getRpcPromiseCallback)(resolve, reject));
         });
     };
     /**
@@ -173,10 +178,10 @@ var BaseProvider = /** @class */ (function (_super) {
      * emits TorusInpageProvider#disconnect
      */
     BaseProvider.prototype._handleStreamDisconnect = function (streamName, error) {
-        logStreamDisconnectWarning(streamName, error, this);
+        (0, utils_1.logStreamDisconnectWarning)(streamName, error, this);
         this._handleDisconnect(false, error ? error.message : undefined);
     };
     return BaseProvider;
-}(SafeEventEmitter));
-export default BaseProvider;
+}(openlogin_jrpc_1.SafeEventEmitter));
+exports.default = BaseProvider;
 //# sourceMappingURL=baseProvider.js.map

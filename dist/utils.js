@@ -1,3 +1,4 @@
+"use strict";
 var __assign = (this && this.__assign) || function () {
     __assign = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
@@ -45,9 +46,14 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-import { rpcErrors } from "@metamask/rpc-errors";
-import config from "./config";
-import log from "./loglevel";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.getPopupFeatures = exports.storageAvailable = exports.FEATURES_CONFIRM_WINDOW = exports.FEATURES_DEFAULT_POPUP_WINDOW = exports.FEATURES_DEFAULT_WALLET_WINDOW = exports.FEATURES_PROVIDER_CHANGE_WINDOW = exports.NOOP = exports.getUserLanguage = exports.getTorusUrl = exports.getWindowId = exports.logStreamDisconnectWarning = exports.createErrorMiddleware = void 0;
+var rpc_errors_1 = require("@metamask/rpc-errors");
+var config_1 = __importDefault(require("./config"));
+var loglevel_1 = __importDefault(require("./loglevel"));
 // utility functions
 /**
  * json-rpc-engine middleware that logs RPC errors and and validates req.method.
@@ -55,11 +61,11 @@ import log from "./loglevel";
  * @param log - The logging API to use.
  * @returns  json-rpc-engine middleware function
  */
-export function createErrorMiddleware() {
+function createErrorMiddleware() {
     return function (req, res, next) {
         // json-rpc-engine will terminate the request when it notices this error
         if (typeof req.method !== "string" || !req.method) {
-            res.error = rpcErrors.invalidRequest({
+            res.error = rpc_errors_1.rpcErrors.invalidRequest({
                 message: "The request 'method' must be a non-empty string.",
                 data: __assign(__assign({}, (req || {})), { cause: "The request 'method' must be a non-empty string." }),
             });
@@ -69,11 +75,12 @@ export function createErrorMiddleware() {
             if (!error) {
                 return done();
             }
-            log.error("Torus - RPC Error: ".concat(error.message), error);
+            loglevel_1.default.error("Torus - RPC Error: ".concat(error.message), error);
             return done();
         });
     };
 }
+exports.createErrorMiddleware = createErrorMiddleware;
 /**
  * Logs a stream disconnection error. Emits an 'error' if given an
  * EventEmitter that has listeners for the 'error' event.
@@ -83,18 +90,20 @@ export function createErrorMiddleware() {
  * @param error - The associated error to log.
  * @param emitter - The logging API to use.
  */
-export function logStreamDisconnectWarning(remoteLabel, error, emitter) {
+function logStreamDisconnectWarning(remoteLabel, error, emitter) {
     var warningMsg = "Torus: Lost connection to \"".concat(remoteLabel, "\".");
     if (error === null || error === void 0 ? void 0 : error.stack) {
         warningMsg += "\n".concat(error.stack);
     }
-    log.warn(warningMsg);
+    loglevel_1.default.warn(warningMsg);
     if (emitter && emitter.listenerCount("error") > 0) {
         emitter.emit("error", warningMsg);
     }
 }
-export var getWindowId = function () { return Math.random().toString(36).slice(2); };
-export var getTorusUrl = function (buildEnv) { return __awaiter(void 0, void 0, void 0, function () {
+exports.logStreamDisconnectWarning = logStreamDisconnectWarning;
+var getWindowId = function () { return Math.random().toString(36).slice(2); };
+exports.getWindowId = getWindowId;
+var getTorusUrl = function (buildEnv) { return __awaiter(void 0, void 0, void 0, function () {
     var torusUrl, logLevel;
     return __generator(this, function (_a) {
         // const versionUsed = version;
@@ -116,20 +125,23 @@ export var getTorusUrl = function (buildEnv) { return __awaiter(void 0, void 0, 
         return [2 /*return*/, { torusUrl: torusUrl, logLevel: logLevel }];
     });
 }); };
-export var getUserLanguage = function () {
+exports.getTorusUrl = getTorusUrl;
+var getUserLanguage = function () {
     var userLanguage = window.navigator.language || "en-US";
     var userLanguages = userLanguage.split("-");
-    userLanguage = Object.prototype.hasOwnProperty.call(config.translations, userLanguages[0]) ? userLanguages[0] : "en";
+    userLanguage = Object.prototype.hasOwnProperty.call(config_1.default.translations, userLanguages[0]) ? userLanguages[0] : "en";
     return userLanguage;
 };
-export var NOOP = function () {
+exports.getUserLanguage = getUserLanguage;
+var NOOP = function () {
     // empty function
 };
-export var FEATURES_PROVIDER_CHANGE_WINDOW = { height: 660, width: 375 };
-export var FEATURES_DEFAULT_WALLET_WINDOW = { height: 740, width: 1315 };
-export var FEATURES_DEFAULT_POPUP_WINDOW = { height: 700, width: 1200 };
-export var FEATURES_CONFIRM_WINDOW = { height: 700, width: 450 };
-export function storageAvailable(type) {
+exports.NOOP = NOOP;
+exports.FEATURES_PROVIDER_CHANGE_WINDOW = { height: 660, width: 375 };
+exports.FEATURES_DEFAULT_WALLET_WINDOW = { height: 740, width: 1315 };
+exports.FEATURES_DEFAULT_POPUP_WINDOW = { height: 700, width: 1200 };
+exports.FEATURES_CONFIRM_WINDOW = { height: 700, width: 450 };
+function storageAvailable(type) {
     var storage;
     try {
         storage = window[type];
@@ -154,10 +166,11 @@ export function storageAvailable(type) {
             storage.length !== 0);
     }
 }
+exports.storageAvailable = storageAvailable;
 /**
  * popup handler utils
  */
-export function getPopupFeatures(_a) {
+function getPopupFeatures(_a) {
     var w = _a.width, h = _a.height;
     // Fixes dual-screen position                             Most browsers      Firefox
     var dualScreenLeft = window.screenLeft !== undefined ? window.screenLeft : window.screenX;
@@ -178,4 +191,5 @@ export function getPopupFeatures(_a) {
     var features = "titlebar=0,toolbar=0,status=0,location=0,menubar=0,height=".concat(h / systemZoom, ",width=").concat(w / systemZoom, ",top=").concat(top, ",left=").concat(left);
     return features;
 }
+exports.getPopupFeatures = getPopupFeatures;
 //# sourceMappingURL=utils.js.map

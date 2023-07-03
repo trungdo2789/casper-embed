@@ -1,3 +1,4 @@
+"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -34,7 +35,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-export var handleEvent = function (handle, eventName, handler) {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.htmlToElement = exports.documentReady = exports.handleEvent = void 0;
+var handleEvent = function (handle, eventName, handler) {
     var handlerArgs = [];
     for (var _i = 3; _i < arguments.length; _i++) {
         handlerArgs[_i - 3] = arguments[_i];
@@ -45,7 +48,8 @@ export var handleEvent = function (handle, eventName, handler) {
     };
     handle.addEventListener(eventName, handlerWrapper);
 };
-export function documentReady() {
+exports.handleEvent = handleEvent;
+function documentReady() {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             return [2 /*return*/, new Promise(function (resolve) {
@@ -53,16 +57,18 @@ export function documentReady() {
                         resolve();
                     }
                     else {
-                        handleEvent(document, "DOMContentLoaded", resolve);
+                        (0, exports.handleEvent)(document, "DOMContentLoaded", resolve);
                     }
                 })];
         });
     });
 }
-export var htmlToElement = function (html) {
+exports.documentReady = documentReady;
+var htmlToElement = function (html) {
     var template = window.document.createElement("template");
     var trimmedHtml = html.trim(); // Never return a text node of whitespace as the result
     template.innerHTML = trimmedHtml;
     return template.content.firstChild;
 };
+exports.htmlToElement = htmlToElement;
 //# sourceMappingURL=embedUtils.js.map

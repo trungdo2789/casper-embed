@@ -1,3 +1,4 @@
+"use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -13,8 +14,9 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import { SafeEventEmitter } from "@toruslabs/openlogin-jrpc";
-import { FEATURES_DEFAULT_POPUP_WINDOW, getPopupFeatures } from "./utils";
+Object.defineProperty(exports, "__esModule", { value: true });
+var openlogin_jrpc_1 = require("@toruslabs/openlogin-jrpc");
+var utils_1 = require("./utils");
 var PopupHandler = /** @class */ (function (_super) {
     __extends(PopupHandler, _super);
     function PopupHandler(_a) {
@@ -22,7 +24,7 @@ var PopupHandler = /** @class */ (function (_super) {
         var _this = _super.call(this) || this;
         _this.url = url;
         _this.target = target || "_blank";
-        _this.features = features || getPopupFeatures(FEATURES_DEFAULT_POPUP_WINDOW);
+        _this.features = features || (0, utils_1.getPopupFeatures)(utils_1.FEATURES_DEFAULT_POPUP_WINDOW);
         _this.window = undefined;
         _this.windowTimer = undefined;
         _this.iClosedWindow = false;
@@ -65,6 +67,6 @@ var PopupHandler = /** @class */ (function (_super) {
         }
     };
     return PopupHandler;
-}(SafeEventEmitter));
-export default PopupHandler;
+}(openlogin_jrpc_1.SafeEventEmitter));
+exports.default = PopupHandler;
 //# sourceMappingURL=PopupHandler.js.map

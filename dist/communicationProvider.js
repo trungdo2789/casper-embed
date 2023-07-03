@@ -1,3 +1,4 @@
+"use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -60,16 +61,20 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-import { EthereumProviderError } from "@metamask/rpc-errors";
-import { COMMUNICATION_JRPC_METHODS, COMMUNICATION_NOTIFICATIONS } from "@toruslabs/base-controllers";
-import BaseProvider from "./baseProvider";
-import configuration from "./config";
-import { documentReady, htmlToElement } from "./embedUtils";
-import { BUTTON_POSITION, } from "./interfaces";
-import log from "./loglevel";
-import messages from "./messages";
-import PopupHandler from "./PopupHandler";
-import { FEATURES_CONFIRM_WINDOW, getPopupFeatures, getUserLanguage } from "./utils";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var rpc_errors_1 = require("@metamask/rpc-errors");
+var base_controllers_1 = require("@toruslabs/base-controllers");
+var baseProvider_1 = __importDefault(require("./baseProvider"));
+var config_1 = __importDefault(require("./config"));
+var embedUtils_1 = require("./embedUtils");
+var interfaces_1 = require("./interfaces");
+var loglevel_1 = __importDefault(require("./loglevel"));
+var messages_1 = __importDefault(require("./messages"));
+var PopupHandler_1 = __importDefault(require("./PopupHandler"));
+var utils_1 = require("./utils");
 /**
  * @param connectionStream - A Node.js duplex stream
  * @param  opts - An options bag
@@ -84,7 +89,7 @@ var TorusCommunicationProvider = /** @class */ (function (_super) {
         // public state
         _this.torusUrl = "";
         _this.dappStorageKey = "";
-        var languageTranslations = configuration.translations[getUserLanguage()];
+        var languageTranslations = config_1.default.translations[(0, utils_1.getUserLanguage)()];
         _this.embedTranslations = languageTranslations.embed;
         _this.windowRefs = {};
         // setup own event listeners
@@ -94,23 +99,23 @@ var TorusCommunicationProvider = /** @class */ (function (_super) {
         });
         var notificationHandler = function (payload) {
             var method = payload.method, params = payload.params;
-            if (method === COMMUNICATION_NOTIFICATIONS.IFRAME_STATUS) {
+            if (method === base_controllers_1.COMMUNICATION_NOTIFICATIONS.IFRAME_STATUS) {
                 var _a = params, isFullScreen = _a.isFullScreen, rid = _a.rid;
                 _this._displayIframe({ isFull: isFullScreen, rid: rid });
             }
-            else if (method === COMMUNICATION_NOTIFICATIONS.CREATE_WINDOW) {
+            else if (method === base_controllers_1.COMMUNICATION_NOTIFICATIONS.CREATE_WINDOW) {
                 var _b = params, windowId = _b.windowId, url = _b.url;
                 _this._createPopupBlockAlert(windowId, url);
             }
-            else if (method === COMMUNICATION_NOTIFICATIONS.CLOSE_WINDOW) {
+            else if (method === base_controllers_1.COMMUNICATION_NOTIFICATIONS.CLOSE_WINDOW) {
                 _this._handleCloseWindow(params);
             }
-            else if (method === COMMUNICATION_NOTIFICATIONS.USER_LOGGED_IN) {
+            else if (method === base_controllers_1.COMMUNICATION_NOTIFICATIONS.USER_LOGGED_IN) {
                 var currentLoginProvider = params.currentLoginProvider;
                 _this._state.isLoggedIn = true;
                 _this._state.currentLoginProvider = currentLoginProvider;
             }
-            else if (method === COMMUNICATION_NOTIFICATIONS.USER_LOGGED_OUT) {
+            else if (method === base_controllers_1.COMMUNICATION_NOTIFICATIONS.USER_LOGGED_OUT) {
                 _this._state.isLoggedIn = false;
                 _this._state.currentLoginProvider = null;
                 _this._displayIframe();
@@ -158,7 +163,7 @@ var TorusCommunicationProvider = /** @class */ (function (_super) {
                                 _this._displayIframe();
                         });
                         return [4 /*yield*/, this.request({
-                                method: COMMUNICATION_JRPC_METHODS.GET_PROVIDER_STATE,
+                                method: base_controllers_1.COMMUNICATION_JRPC_METHODS.GET_PROVIDER_STATE,
                                 params: [],
                             })];
                     case 1:
@@ -168,10 +173,10 @@ var TorusCommunicationProvider = /** @class */ (function (_super) {
                         return [3 /*break*/, 4];
                     case 2:
                         error_1 = _b.sent();
-                        log.error("Torus: Failed to get initial state. Please report this bug.", error_1);
+                        loglevel_1.default.error("Torus: Failed to get initial state. Please report this bug.", error_1);
                         return [3 /*break*/, 4];
                     case 3:
-                        log.info("initialized communication state");
+                        loglevel_1.default.info("initialized communication state");
                         this._state.initialized = true;
                         this.emit("_initialized");
                         return [7 /*endfinally*/];
@@ -191,7 +196,7 @@ var TorusCommunicationProvider = /** @class */ (function (_super) {
             else
                 finalUrl.hash = "#dappStorageKey=".concat(this.dappStorageKey);
         }
-        var handledWindow = new PopupHandler({ url: finalUrl, target: target, features: features });
+        var handledWindow = new PopupHandler_1.default({ url: finalUrl, target: target, features: features });
         handledWindow.open();
         if (!handledWindow.window) {
             this._createPopupBlockAlert(windowId, finalUrl.href);
@@ -201,14 +206,14 @@ var TorusCommunicationProvider = /** @class */ (function (_super) {
         this.windowRefs[windowId] = handledWindow;
         // We tell the iframe that the window has been successfully opened
         this.request({
-            method: COMMUNICATION_JRPC_METHODS.OPENED_WINDOW,
+            method: base_controllers_1.COMMUNICATION_JRPC_METHODS.OPENED_WINDOW,
             params: { windowId: windowId },
         });
         handledWindow.once("close", function () {
             // user closed the window
             delete _this.windowRefs[windowId];
             _this.request({
-                method: COMMUNICATION_JRPC_METHODS.CLOSED_WINDOW,
+                method: base_controllers_1.COMMUNICATION_JRPC_METHODS.CLOSED_WINDOW,
                 params: { windowId: windowId },
             });
         });
@@ -222,25 +227,25 @@ var TorusCommunicationProvider = /** @class */ (function (_super) {
             style.height = "70px";
             style.width = "70px";
             switch (this._state.buttonPosition) {
-                case BUTTON_POSITION.TOP_LEFT:
+                case interfaces_1.BUTTON_POSITION.TOP_LEFT:
                     style.top = "0px";
                     style.left = "0px";
                     style.right = "auto";
                     style.bottom = "auto";
                     break;
-                case BUTTON_POSITION.TOP_RIGHT:
+                case interfaces_1.BUTTON_POSITION.TOP_RIGHT:
                     style.top = "0px";
                     style.right = "0px";
                     style.left = "auto";
                     style.bottom = "auto";
                     break;
-                case BUTTON_POSITION.BOTTOM_RIGHT:
+                case interfaces_1.BUTTON_POSITION.BOTTOM_RIGHT:
                     style.bottom = "0px";
                     style.right = "0px";
                     style.top = "auto";
                     style.left = "auto";
                     break;
-                case BUTTON_POSITION.BOTTOM_LEFT:
+                case interfaces_1.BUTTON_POSITION.BOTTOM_LEFT:
                 default:
                     style.bottom = "0px";
                     style.left = "0px";
@@ -261,7 +266,7 @@ var TorusCommunicationProvider = /** @class */ (function (_super) {
         Object.assign(this.torusIframe.style, style);
         this._state.isIFrameFullScreen = isFull;
         this.request({
-            method: COMMUNICATION_JRPC_METHODS.IFRAME_STATUS,
+            method: base_controllers_1.COMMUNICATION_JRPC_METHODS.IFRAME_STATUS,
             params: { isIFrameFullScreen: isFull, rid: rid },
         });
     };
@@ -298,7 +303,7 @@ var TorusCommunicationProvider = /** @class */ (function (_super) {
         if (!this._state.isConnected) {
             this._state.isConnected = true;
             this.emit("connect", { currentLoginProvider: currentLoginProvider, isLoggedIn: isLoggedIn });
-            log.debug(messages.info.connected(currentLoginProvider));
+            loglevel_1.default.debug(messages_1.default.info.connected(currentLoginProvider));
         }
     };
     /**
@@ -317,14 +322,14 @@ var TorusCommunicationProvider = /** @class */ (function (_super) {
             this._state.isConnected = false;
             var error = void 0;
             if (isRecoverable) {
-                error = new EthereumProviderError(1013, // Try again later
-                errorMessage || messages.errors.disconnected());
-                log.debug(error);
+                error = new rpc_errors_1.EthereumProviderError(1013, // Try again later
+                errorMessage || messages_1.default.errors.disconnected());
+                loglevel_1.default.debug(error);
             }
             else {
-                error = new EthereumProviderError(1011, // Internal error
-                errorMessage || messages.errors.permanentlyDisconnected());
-                log.error(error);
+                error = new rpc_errors_1.EthereumProviderError(1011, // Internal error
+                errorMessage || messages_1.default.errors.permanentlyDisconnected());
+                loglevel_1.default.error(error);
                 this._state.currentLoginProvider = null;
                 this._state.isLoggedIn = false;
                 this._state.torusWidgetVisibility = false;
@@ -350,15 +355,15 @@ var TorusCommunicationProvider = /** @class */ (function (_super) {
                 switch (_a.label) {
                     case 0:
                         logoUrl = this.getLogoUrl();
-                        torusAlert = htmlToElement('<div id="torusAlert" class="torus-alert--v2">' +
+                        torusAlert = (0, embedUtils_1.htmlToElement)('<div id="torusAlert" class="torus-alert--v2">' +
                             "<div id=\"torusAlert__logo\"><img src=\"".concat(logoUrl, "\" /></div>") +
                             "<div>" +
                             "<h1 id=\"torusAlert__title\">".concat(this.embedTranslations.actionRequired, "</h1>") +
                             "<p id=\"torusAlert__desc\">".concat(this.embedTranslations.pendingAction, "</p>") +
                             "</div>" +
                             "</div>");
-                        successAlert = htmlToElement("<div><a id=\"torusAlert__btn\">".concat(this.embedTranslations.continue, "</a></div>"));
-                        btnContainer = htmlToElement('<div id="torusAlert__btn-container"></div>');
+                        successAlert = (0, embedUtils_1.htmlToElement)("<div><a id=\"torusAlert__btn\">".concat(this.embedTranslations.continue, "</a></div>"));
+                        btnContainer = (0, embedUtils_1.htmlToElement)('<div id="torusAlert__btn-container"></div>');
                         btnContainer.appendChild(successAlert);
                         torusAlert.appendChild(btnContainer);
                         bindOnLoad = function () {
@@ -366,7 +371,7 @@ var TorusCommunicationProvider = /** @class */ (function (_super) {
                                 _this._handleWindow(windowId, {
                                     url: url,
                                     target: "_blank",
-                                    features: getPopupFeatures(FEATURES_CONFIRM_WINDOW),
+                                    features: (0, utils_1.getPopupFeatures)(utils_1.FEATURES_CONFIRM_WINDOW),
                                 });
                                 torusAlert.remove();
                                 if (_this.torusAlertContainer.children.length === 0)
@@ -376,7 +381,7 @@ var TorusCommunicationProvider = /** @class */ (function (_super) {
                         attachOnLoad = function () {
                             _this.torusAlertContainer.appendChild(torusAlert);
                         };
-                        return [4 /*yield*/, documentReady()];
+                        return [4 /*yield*/, (0, embedUtils_1.documentReady)()];
                     case 1:
                         _a.sent();
                         attachOnLoad();
@@ -403,6 +408,6 @@ var TorusCommunicationProvider = /** @class */ (function (_super) {
         isConnected: false,
     };
     return TorusCommunicationProvider;
-}(BaseProvider));
-export default TorusCommunicationProvider;
+}(baseProvider_1.default));
+exports.default = TorusCommunicationProvider;
 //# sourceMappingURL=communicationProvider.js.map

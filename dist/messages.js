@@ -1,4 +1,6 @@
-export default {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = {
     errors: {
         disconnected: function () { return "Torus: Lost connection to Torus."; },
         permanentlyDisconnected: function () { return "Torus: Disconnected from iframe. Page reload required."; },
