@@ -2,20 +2,14 @@
   "name": "@toruslabs/casper-embed",
   "version": "3.1.0",
   "description": "Embed script for casper blockchain",
-  "main": "dist/torus.cjs.js",
-  "module": "dist/torus.esm.js",
-  "unpkg": "dist/torus.umd.min.js",
-  "jsdelivr": "dist/torus.umd.min.js",
+  "main": "dist/index.js",
   "types": "dist/types/index.d.ts",
   "files": [
     "dist",
     "src"
   ],
   "scripts": {
-    "start": "torus-scripts start --name=torus",
-    "build": "torus-scripts build --name=torus",
-    "release": "torus-scripts release",
-    "prepack": "npm run build",
+    "build": "rm -rf dist && tsc",
     "lint": "eslint --fix 'src/**/*.ts'",
     "prepare": "husky install"
   },
